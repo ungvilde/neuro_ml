@@ -41,16 +41,16 @@ class EdgeRegressor(MessagePassing):
             Linear(10*params.n_neurons, params.n_neurons)
         ) # Second MLP
 
-    def forward(self, x, edge_index):
+    def forward(self, x, edge_index): # x is propagated and used in message, should be crosscorr?
         # x has shape [N, in_channels]
         # edge_index has shape [2, E]
 
         return self.propagate(edge_index, x=x)
 
-    def message(self, x_i, x_j):
+    def message(self, x_i, x_j): #TODO: send inn crosscorrelations of node i and j instead?
         # x_i has shape [E, in_channels]
         # x_j has shape [E, in_channels]
-        batch_size = int(x_i.shape[0] / self.n_neurons**2)
+        batch_size = int(x_i.shape[0] / self.n_neurons**2) # NOTE: seems to just be 1?
 
         # Calculate the influence of i on j forward in time
         inner_products = [torch.sum(x_i*self.shift(x_j, -(t+1)), dim=1).unsqueeze(dim=1) for t in range(self.n_shifts)]
@@ -67,17 +67,6 @@ class EdgeRegressor(MessagePassing):
 
     def update(self, inputs):
         return self.mlp2(inputs) # Apply the second MLP
-
-    def shift(self, x, n):
-        # Shifts the time series x by n time steps to the left
-        result = torch.zeros_like(x)
-        if n < 0:
-            result[:, :n] = x[:, -n:]
-        elif n > 0:
-            result[:, -n:] = x[:, :n]
-        else:
-            result = x
-        return result
 
     def save(self, filename):
         # Saves the model to a file

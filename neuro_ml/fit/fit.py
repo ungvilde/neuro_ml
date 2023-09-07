@@ -9,7 +9,6 @@ from neuro_ml.dataset import create_train_val_dataloaders, create_test_dataloade
 
 def fit(
     model,
-    model_is_classifier,
     model_params,
     dataset_params,
     device,
@@ -18,7 +17,7 @@ def fit(
 ):
     # Prepare data loaders for training and validation
     train_loader, val_loader = create_train_val_dataloaders(
-        model.DATASET, model_is_classifier, dataset_params
+        model.DATASET, dataset_params
     )
 
     # Initialize model
@@ -26,11 +25,7 @@ def fit(
 
     # Set optimizer and criterion
     optimizer = torch.optim.Adam(params=model.parameters(), lr=learing_rate)
-    criterion = (
-        torch.nn.CrossEntropyLoss()
-        if model_is_classifier == True
-        else torch.nn.MSELoss()
-    )
+    criterion = (torch.nn.MSELoss())
 
     log.debug(f"Fitting {model.__class__.__name__} on {device}")
 

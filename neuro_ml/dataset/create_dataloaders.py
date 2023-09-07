@@ -9,7 +9,6 @@ from torch.utils.data import dataloader, random_split
 
 def create_train_val_dataloaders(
     Dataset,
-    model_is_classifier,
     dataset_params,
     train_val_test_size=config.TRAIN_VAL_TEST_SIZE,
     seed=config.SEED,
@@ -39,37 +38,25 @@ def create_train_val_dataloaders(
     train_dataset = Dataset(
         train_filenames,
         dataset_params,
-        model_is_classifier,
     )
 
     val_dataset = Dataset(
         val_filenames,
         dataset_params,
-        model_is_classifier,
     )
 
-    # Pytorch geometric has a different data loader so if the dataset is geometric we use that
-    if Dataset.IS_GEOMETRIC:
-        train_loader = torch_geometric.loader.DataLoader(
-            train_dataset.create_geometric_data(),
-            batch_size=batch_size,
-            shuffle=True,
-            drop_last=True,
-        )
-        val_loader = torch_geometric.loader.DataLoader(
-            val_dataset.create_geometric_data(),
-            batch_size=batch_size,
-            shuffle=False,
-            drop_last=False,
-        )
-
-    else:
-        train_loader = torch.utils.data.DataLoader(
-            train_dataset, batch_size=batch_size, shuffle=True, drop_last=True
-        )
-        val_loader = torch.utils.data.DataLoader(
-            val_dataset, batch_size=batch_size, shuffle=False, drop_last=False
-        )
+    train_loader = torch_geometric.loader.DataLoader(
+        train_dataset.create_geometric_data(),
+        batch_size=batch_size,
+        shuffle=True,
+        drop_last=True,
+    )
+    val_loader = torch_geometric.loader.DataLoader(
+        val_dataset.create_geometric_data(),
+        batch_size=batch_size,
+        shuffle=False,
+        drop_last=False,
+    )
 
     log.info("Data loaders created successfully")
 
@@ -82,7 +69,6 @@ def create_train_val_dataloaders(
 def create_test_dataloader(
     Dataset,
     dataset_params,
-    model_is_classifier,
     train_val_test_size=config.TRAIN_VAL_TEST_SIZE,
     seed=config.SEED,
     batch_size=config.BATCH_SIZE,
@@ -111,19 +97,14 @@ def create_test_dataloader(
     test_dataset = Dataset(
         test_filenames,
         dataset_params,
-        model_is_classifier,
     )
 
     # Pytorch geometric has a different data loader so if the dataset is geometric we use that
-    if Dataset.IS_GEOMETRIC:
-        test_loader = torch_geometric.loader.DataLoader(
-            test_dataset.create_geometric_data(),
-            batch_size=batch_size,
-            shuffle=False,
-            drop_last=False,
-        )
-    else:
-        test_loader = torch.utils.data.DataLoader(
-            test_dataset, batch_size=batch_size, shuffle=False, drop_last=False
-        )
+    test_loader = torch_geometric.loader.DataLoader(
+        test_dataset.create_geometric_data(),
+        batch_size=batch_size,
+        shuffle=False,
+        drop_last=False,
+    )
+
     return test_loader

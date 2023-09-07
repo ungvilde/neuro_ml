@@ -1,4 +1,4 @@
-from neuro_ml.dataset import SimulationEnum, DatasetParams
+from neuro_ml.dataset import DatasetParams
 from neuro_ml.models import (
     EdgeRegressor,
     EdgeRegressorParams,
@@ -20,7 +20,6 @@ def fit_edge_regressor(dataset_params):
     # Fit the model
     fit(
         EdgeRegressor,
-        model_is_classifier=False,
         model_params=edge_regressor_params,
         dataset_params=dataset_params,
         device=device,
@@ -32,15 +31,9 @@ if __name__ == "__main__":
     # Set the simulation, window size, and number of files to use
     dataset_params = DatasetParams(
         n_neurons=20,
-        n_timesteps=1_000,
-        timestep_bin_length=500,
+        n_timesteps=100,
         number_of_files=100,
-        simulation_enum=SimulationEnum.mikkel,
     )
-
     fit_edge_regressor(dataset_params)
 
-    # graph_simple_params = EdgeRegressor(
-    # n_shifts = 20
-    # )
-    # test_model(EdgeRegressor, epoch=10, dataset_params=dataset_params, model_params = graph_simple_params, model_is_classifier=False, device=device)
+   

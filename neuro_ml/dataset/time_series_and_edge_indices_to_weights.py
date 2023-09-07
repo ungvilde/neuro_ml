@@ -8,12 +8,10 @@ class TimeSeriesAndEdgeIndicesToWeightsDataset(AbstractDataset):
         self,
         filenames,
         dataset_params,
-        is_classifier,
     ) -> None:
         super().__init__(
             filenames,
             dataset_params,
-            is_classifier,
         )
 
         self._create_fully_connected_edge_index(dataset_params.n_neurons)
